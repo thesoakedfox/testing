@@ -26,3 +26,41 @@ The resistive water sensor already available to me was suitable for **preliminar
 ### Scope decision
 
 The MVP would prioritise trustworthy soil-moisture measurement and a simple recommendation over a wireless dashboard or fully automatic irrigation. A local display would allow users to check the soil condition without a computer, once basic sensing had been verified.
+
+
+## 2. Preliminary resistive sensor and ESP32 ADC acquisition
+
+### 2.1 Circuit and purpose
+
+Before the capacitive probe was available, I connected a resistive water sensor to the ESP32 to test analogue acquisition:
+
+| Connection | Configuration |
+|---|---|
+| Sensor supply | ESP32 3.3 V |
+| Sensor ground | Common GND |
+| Analogue signal | ESP32 GPIO34 (ADC1-capable input) |
+
+I used **GPIO34** because the sensor output was an analogue signal and only needed to be read by the ESP32; the ESP32's ADC converts the voltage to a number for processing.
+
+![Preliminary resistive sensor connected to an ESP32](assets/sprint1/resistive-esp32-wiring.jpg)
+
+![Available breadboard components and preliminary sensor](assets/sprint1/resistive-components.jpg)
+
+### 2.2 Hypothesis and results
+
+I expected a low reading with dry exposed sensor tracks, and a higher ADC reading when those tracks contacted water.
+
+| Test condition | Observed raw ADC |
+|---|---:|
+| Completely dry | 0 |
+| Tracks in water, across later tests | Approximately 1500–2000 (varied with the physical test condition) |
+
+![Initial analogue-reading sketch](assets/sprint1/initial-adc-code.png)
+
+![Serial output from the early dry-sensor test](assets/sprint1/initial-adc-serial-dry.png)
+
+![Serial output from the early wet-sensor test](assets/sprint1/initial-adc-serial-water.png)
+
+### 2.3 Interpretation
+
+This established that the **ESP32 could acquire an analogue sensor signal**. The ADC number was not, however, a calibrated soil-moisture percentage. Local calibration and attention to the sensing conditions would still be needed before that value could support watering decisions.
