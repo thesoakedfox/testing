@@ -64,3 +64,44 @@ I expected a low reading with dry exposed sensor tracks, and a higher ADC readin
 ### 2.3 Interpretation
 
 This established that the **ESP32 could acquire an analogue sensor signal**. The ADC number was not, however, a calibrated soil-moisture percentage. Local calibration and attention to the sensing conditions would still be needed before that value could support watering decisions.
+
+
+## 3. Response-over-time and immersion-depth tests
+
+### 3.1 Reason for further testing
+
+The preliminary sensor reading did not become stable immediately after immersion. Even when I tried to keep the physical condition unchanged, the displayed value could continue changing for several seconds. I therefore tested the reading over approximately **60 seconds** at two immersion depths: **10 mm** and **30 mm**.
+
+![Resistive sensor immersed at approximately 10 mm](assets/sprint1/immersion-10mm.jpg)
+
+![Resistive sensor immersed at approximately 30 mm](assets/sprint1/immersion-30mm.jpg)
+
+### 3.2 Observed response
+
+| Condition | Initial response | Later response |
+|---|---|---|
+| 10 mm immersion | Started near 1450 ADC; peaked near 1616 after about 8.5 s | Gradually decreased to approximately 1350 by the end of 60 s |
+| 30 mm immersion | Started near 1615 ADC and rose towards 1800 | Became much more stable after roughly 10 s, although some slow variation remained |
+
+**10 mm evidence:**
+
+![10 mm immersion serial-monitor evidence](assets/sprint1/immersion-10mm-monitor.png)
+
+**30 mm evidence:**
+
+![30 mm immersion serial-monitor evidence](assets/sprint1/immersion-30mm-monitor.png)
+
+### 3.3 Analysis and limitations
+
+The sensor output did not appear to depend solely on instantaneous water depth. Possible influences included:
+
+- The length of exposed conductive tracks covered by water.
+- A changing water film on the sensor surface.
+- Minor changes in position or angle.
+- The behaviour of the powered exposed resistive electrodes.
+
+This experiment did **not** identify which mechanism was responsible. I therefore did not use these preliminary readings as final soil-calibration thresholds.
+
+### 3.4 Decision for the next test
+
+**Measurement timing needed to be controlled.** Comparing a reading collected two seconds after immersion with one taken fifteen seconds after immersion would not be a fair comparison. In subsequent trials I controlled immersion depth, sensor orientation and the measurement period more consistently.
