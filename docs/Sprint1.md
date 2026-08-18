@@ -105,3 +105,42 @@ This experiment did **not** identify which mechanism was responsible. I therefor
 ### 3.4 Decision for the next test
 
 **Measurement timing needed to be controlled.** Comparing a reading collected two seconds after immersion with one taken fifteen seconds after immersion would not be a fair comparison. In subsequent trials I controlled immersion depth, sensor orientation and the measurement period more consistently.
+
+
+## 4. Repeatability test at 30 mm
+
+### 4.1 Test method
+
+I tested whether the resistive probe gave similar readings when the same condition was repeated. I immersed it to **30 mm** in the same container and repeated the procedure **five times**, attempting to keep the orientation and measurement period consistent.
+
+![Measuring sensor immersion depth against a ruler](assets/sprint1/repeatability-measured-depth.jpg)
+
+![Code used for repeated ADC observations](assets/sprint1/repeatability-code.png)
+
+### 4.2 Results
+
+| Trial | Mean ADC reading |
+|---|---:|
+| Trial 1 | 1871 |
+| Trial 2 | 1915 |
+| Trial 3 | 1905 |
+| Trial 4 | 1919 |
+| Trial 5 | 1886 |
+| **Overall mean** | **1899** |
+
+### 4.3 Analysis
+
+The five trial means were closer to one another than some of the changes observed in the initial response-over-time tests. Within stable periods of individual trials, short-term variation was relatively small. This suggested that **random ADC noise was probably not the main cause** of the earlier, larger differences.
+
+Changes to the physical sensing condition were likely more important, including:
+
+- Insertion depth and orientation.
+- Water wetting the probe's PCB surface.
+- The precise position of the probe.
+- The condition of exposed conductive tracks.
+
+A limitation was that removing the probe could carry small amounts of water out of the container and slightly change the water level. The means did not consistently decline from one trial to the next, so this alone could not explain the observed variation.
+
+### 4.4 Development decision
+
+I initially expected software filtering to be the main reliability improvement. Repeatability testing changed that assessment: filtering might reduce small electronic fluctuations, but **repeatable physical placement and controlled testing were also essential**.
