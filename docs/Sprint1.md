@@ -144,3 +144,32 @@ A limitation was that removing the probe could carry small amounts of water out 
 ### 4.4 Development decision
 
 I initially expected software filtering to be the main reliability improvement. Repeatability testing changed that assessment: filtering might reduce small electronic fluctuations, but **repeatable physical placement and controlled testing were also essential**.
+
+
+## 5. Ten-sample averaging / software filtering
+
+### 5.1 Implementation and test
+
+After the repeatability test, I modified the programme to compare a single raw ADC reading with the **average of ten ADC samples**, collected approximately **5 ms apart**.
+
+![Code for collecting and averaging ADC samples](assets/sprint1/averaging-code.png)
+
+![Serial output used to compare raw and averaged readings](assets/sprint1/averaging-output.png)
+
+### 5.2 Results
+
+The original Sprint 1 document reports these values from a stable section of the **third filtering test**:
+
+| Measurement | Raw ADC | 10-sample average |
+|---|---:|---:|
+| Mean | 1820.8 | 1819.7 |
+| Standard deviation | 4.74 | 3.64 |
+| Range | 19 | 14 |
+
+The standard deviation decreased by approximately **23%** and the range by approximately **26%**, while the mean remained nearly unchanged.
+
+### 5.3 Interpretation
+
+Averaging gave a measurable but modest reduction in short-term variability, rather than substantially shifting the underlying signal. Ten samples taken approximately 5 ms apart required about **50 ms** to gather. This delay was acceptable because soil moisture changes far more slowly.
+
+**Decision:** I retained the 10-sample averaging method. It could smooth individual ADC fluctuations, but could not remove larger shifts caused by moving or reinserting the sensor. Physical placement and local calibration remained necessary.
