@@ -173,3 +173,28 @@ The standard deviation decreased by approximately **23%** and the range by appro
 Averaging gave a measurable but modest reduction in short-term variability, rather than substantially shifting the underlying signal. Ten samples taken approximately 5 ms apart required about **50 ms** to gather. This delay was acceptable because soil moisture changes far more slowly.
 
 **Decision:** I retained the 10-sample averaging method. It could smooth individual ADC fluctuations, but could not remove larger shifts caused by moving or reinserting the sensor. Physical placement and local calibration remained necessary.
+
+
+## 6. Change to the capacitive soil-moisture sensor
+
+### 6.1 Reason for the change
+
+Once the ESP32 analogue-input and filtering methods were working, I replaced the preliminary resistive sensor with the **capacitive soil-moisture sensor** selected during the inquiry. This choice reduced reliance on exposed resistive electrodes and was better suited to sustained contact with damp soil.
+
+![Capacitive soil-moisture sensor probe](assets/sprint1/capacitive-probe.jpg)
+
+![Capacitive probe wired for ESP32 testing](assets/sprint1/capacitive-wiring.jpg)
+
+### 6.2 Initial air, dry-soil and wet-soil readings
+
+| Test condition | Approximate filtered ADC reading |
+|---|---:|
+| Probe in air | 2947 |
+| Probe inserted into relatively dry soil | 2562 |
+| Soil after water was added | 1550–1560 |
+
+![Initial capacitive sensor ADC monitor output](assets/sprint1/capacitive-adc-output.png)
+
+### 6.3 Analysis
+
+For this sensor, **higher ADC values represented drier conditions** and **lower ADC values represented wetter conditions** in these tests. The difference between relatively dry and wet soil was large enough to justify further calibration. The readings were not treated as universal moisture percentages; they were values for this particular probe and test arrangement.
