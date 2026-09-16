@@ -198,3 +198,39 @@ Once the ESP32 analogue-input and filtering methods were working, I replaced the
 ### 6.3 Analysis
 
 For this sensor, **higher ADC values represented drier conditions** and **lower ADC values represented wetter conditions** in these tests. The difference between relatively dry and wet soil was large enough to justify further calibration. The readings were not treated as universal moisture percentages; they were values for this particular probe and test arrangement.
+
+
+## 7. Local calibration in the intended soil
+
+### 7.1 Method
+
+Because my inquiry found that soil type and installation conditions can affect sensor results, I carried out a local calibration rather than copying thresholds from another source.
+
+I used approximately **100 g of soil** in a small container and progressively added measured quantities of water. From the 10 mL test onward I tried to leave the sensor in the same position, so a change in insertion depth would not be confused with a change in moisture. I also recorded values over time instead of relying on the first reading immediately after watering. The **0-water condition** represented the soil before any water was added.
+
+![Calibration probe inserted into test soil](assets/sprint1/calibration-probe-in-soil.jpg)
+
+![Measuring water for soil calibration](assets/sprint1/calibration-water-weighing.jpg)
+
+![Container holding soil for calibration](assets/sprint1/calibration-soil-container.jpg)
+
+### 7.2 Recorded calibration data
+
+| Added water (g in the original table) | Filtered mean ADC | Observation |
+|---|---:|---|
+| 0 | 2736 | Dry, loose soil |
+| 10 | 2663 | Slightly damp |
+| 15 | 2428 | Not recorded |
+| 20 | 2065 | Not recorded |
+| 25 | 1907 | Moist; no standing water |
+| 30 | 1820 | Not recorded |
+| 45 | 1830 | Very wet |
+| 60 | 1519 | Dark soil; some surface water |
+
+> **Original-document unit note:** the data table labels the added water in **g**, whereas the accompanying paragraphs sometimes describe additions in **mL**. Both usages appear in the source document; this transcription preserves the table's unit rather than silently reconciling them.
+
+### 7.3 Analysis
+
+In general, the ADC value **decreased as water was added**, supporting the direction found in the initial capacitive-probe test. The response was **not perfectly linear**: the reading at 30 (about 1820) was slightly lower than the later 45 reading (about 1830), despite the larger quantity of added water. The values also continued changing as moisture spread through the soil.
+
+Consequently, waiting time, moisture distribution and sensor position needed to be considered when interpreting readings. These experimental values provided locally observed reference points; they did not establish a universal calibration for all soils or plants.
