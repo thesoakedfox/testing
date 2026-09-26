@@ -234,3 +234,49 @@ I used approximately **100 g of soil** in a small container and progressively ad
 In general, the ADC value **decreased as water was added**, supporting the direction found in the initial capacitive-probe test. The response was **not perfectly linear**: the reading at 30 (about 1820) was slightly lower than the later 45 reading (about 1830), despite the larger quantity of added water. The values also continued changing as moisture spread through the soil.
 
 Consequently, waiting time, moisture distribution and sensor position needed to be considered when interpreting readings. These experimental values provided locally observed reference points; they did not establish a universal calibration for all soils or plants.
+
+
+## 8. Dry / Suitable / Wet classification and threshold tests
+
+### 8.1 Choosing reference conditions
+
+I selected three reference observations from the soil calibration:
+
+| Reference condition | Filtered ADC | Physical observation |
+|---|---:|---|
+| Dry | 2736 | Soil dry before watering |
+| Suitable | 1907 | Moist soil without standing water at the 25-water point |
+| Wet | 1519 | Darker soil with some surface water at the 60-water point |
+
+I used the midpoints between the reference readings as **initial boundaries** for three states, rather than treating the ADC number itself as a meaningful percentage.
+
+### 8.2 Classification table
+
+| Filtered ADC value | Moisture status | User-facing advice |
+|---|---|---|
+| **2322 and above** | **DRY** | Water soon |
+| **1714–2321** | **SUITABLE** | No watering needed |
+| **1713 and below** | **WET** | Do not water |
+
+This converts the filtered sensor input into a direct recommendation that a beginner gardener can interpret.
+
+### 8.3 Boundary testing
+
+I tested inputs immediately on either side of both thresholds:
+
+| Test ADC | Expected / observed classification |
+|---|---|
+| 2322 | DRY |
+| 2321 | SUITABLE |
+| 1714 | SUITABLE |
+| 1713 | WET |
+
+The programme returned the intended state at each of these exact boundary values, confirming that the conditional comparisons worked for the initial thresholds.
+
+### 8.4 Hysteresis refinement
+
+I then introduced **hysteresis**: instead of switching state whenever a reading crossed a single numerical boundary, the value had to move further into the next band before the status changed. I used this approach around both the Dry/Suitable and Suitable/Wet transitions.
+
+The source document reports that the display stayed more stable near thresholds while still responding to meaningful moisture changes. **The exact numeric hysteresis margins were not specified in the source**, so they are not invented here.
+
+**Decision:** Keep ten-sample filtering, calibrated status bands and hysteresis together. They address different problems: small sampling noise, local moisture interpretation and rapid switching at category boundaries.
