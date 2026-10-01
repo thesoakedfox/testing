@@ -280,3 +280,97 @@ I then introduced **hysteresis**: instead of switching state whenever a reading 
 The source document reports that the display stayed more stable near thresholds while still responding to meaningful moisture changes. **The exact numeric hysteresis margins were not specified in the source**, so they are not invented here.
 
 **Decision:** Keep ten-sample filtering, calibrated status bands and hysteresis together. They address different problems: small sampling noise, local moisture interpretation and rapid switching at category boundaries.
+
+
+## 9. Integrating the SH1106 OLED local display
+
+### 9.1 Display choice and tests
+
+Once moisture measurement and classification worked, I added a **1.3-inch, 128 × 64 SH1106 OLED**. The purpose was to show actionable soil information without requiring a computer or knowledge of ADC values.
+
+![SH1106 OLED module used in Sprint 1](assets/sprint1/sh1106-oled-module.jpg)
+
+![OLED and ESP32 during breadboard integration](assets/sprint1/sh1106-circuit-wiring.jpg)
+
+I first used an **I²C scanner** to verify that the ESP32 could detect the display. I then tested simple text output before presenting moisture-status information.
+
+![Initial OLED text-output test](assets/sprint1/oled-initial-text.jpg)
+
+![OLED displaying moisture status and ADC data](assets/sprint1/oled-watering-status.jpg)
+
+The final Sprint 1 interface presented the **soil state and watering recommendation as the main information**, with a smaller raw/filtered value retained for transparency and troubleshooting.
+
+### 9.2 Integrated subsystems
+
+| Subsystem | Function |
+|---|---|
+| Capacitive sensing | Changes in the dielectric environment around the probe produce an analogue output; the sensor does not return a direct moisture percentage |
+| Analogue acquisition | GPIO34 / ADC1 on the ESP32 converts the analogue voltage into an ADC number |
+| Filtering | Ten samples, gathered about 5 ms apart, are averaged to reduce short-term variation |
+| Processing | Locally calibrated bands and hysteresis convert the averaged value into a stable soil state |
+| Output | The SH1106 OLED shows the moisture state and watering recommendation |
+| Debugging | Serial output remains available to view raw and filtered values during development |
+
+### 9.3 Signal and data flow
+
+**Soil → capacitive probe (analogue voltage) → ESP32 GPIO34 ADC → 10-sample average → calibrated classification with hysteresis → OLED message.**
+
+The OLED uses **I²C**, with **GPIO21 as SDA** and **GPIO22 as SCL**. The ESP32 controls the bus and sends display data; the two signal lines reduce the number of GPIO connections compared with a parallel display interface.
+
+![System block diagram from the assessment document](assets/sprint1/sprint1-system-block-diagram.png)
+
+### 9.4 Operational sequence
+
+1. Power is supplied and the ESP32 starts.
+2. Serial communication is initialised.
+3. The OLED / I²C link is initialised.
+4. The ESP32 collects ten moisture-sensor ADC samples.
+5. The samples are averaged.
+6. The filtered result is classified using local thresholds and hysteresis.
+7. The OLED displays the current condition and watering guidance.
+8. After a short wait, the cycle repeats.
+
+### 9.5 Communication interfaces
+
+**Analogue ADC:** The capacitive sensor sends a varying voltage to the ESP32; there is no digital packet or bus protocol between this sensor and the ADC input.
+
+**I²C:** The OLED uses SDA to carry data and SCL as the clock signal. This is suitable for a small display and leaves the possibility of adding other devices to the I²C bus later, subject to compatible addresses and wiring.
+
+## 10. Client / stakeholder / expert feedback
+
+The original Sprint 1 report states that I showed the OLED prototype to **five potential users** and asked them to interpret its statuses without extra explanation. Most found the large status text easier to understand than a raw ADC number.
+
+- **Two users** liked having a numerical reading available for transparency, but did not want it to dominate the main display.
+- **One user** suggested replacing **“OK”** with **“SUITABLE”**, because “OK” might wrongly imply that the *whole plant* was healthy, rather than describing soil moisture alone.
+- I accepted that suggestion and changed the advice to **“SUITABLE — No watering needed”** to make the scope of the statement clearer.
+
+The source identifies two household stakeholders, one school gardener and one industry expert among these respondents, but does not clearly specify the fifth respondent's role. No extra participant details are added here.
+
+### Impact of feedback
+
+The decision supported the main design objective: communicate **actionable watering guidance** while avoiding overclaiming what a moisture probe measures. Numerical ADC information could remain in a secondary position for checking and calibration.
+
+## 11. Sprint 1 outcome and next steps
+
+### Achieved in this sprint
+
+By the end of the documented Sprint 1 sequence, the prototype had:
+
+- Established ESP32 analogue sensing using GPIO34.
+- Compared immersion response and repeatability in a preliminary resistive probe.
+- Measured a modest improvement from ten-sample averaging.
+- Migrated to capacitive soil sensing.
+- Collected local soil calibration observations.
+- Produced Dry, Suitable and Wet decisions, including boundary checks and hysteresis.
+- Displayed the soil condition and advice locally using the SH1106 OLED.
+- Refined a status label based on user feedback.
+
+### Planned for Sprint 2 — not claimed as completed in Sprint 1
+
+The next stage would focus on **permanent/perfboard wiring**, stronger connectors, cable strain relief, moisture protection and an enclosure. The plan also included integrating a **DS18B20 temperature sensor**, then deciding whether temperature should influence advice or simply appear as extra information.
+
+Wireless logging and a dashboard remained **optional later extensions**. The inquiry identified additional Wi-Fi, privacy, data-storage and debugging complexity, so these would only be considered after the local prototype was reliable.
+
+---
+
+*Evidence note: descriptions, measurements, pictures and reported stakeholder feedback are taken from the Sprint 1 portion of the provided assessment document. Screenshot images are preserved rather than converted into guessed source code. Specific elapsed dates for the individual experiments were not given in that document.*
